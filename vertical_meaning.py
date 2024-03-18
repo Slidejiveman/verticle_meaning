@@ -6,7 +6,10 @@ from lambeq import IQPAnsatz, RemoveCupsRewriter
 # note the "h" type for honorifics/polite form
 n, s, h = Ty('n'), Ty('s'), Ty ('h') 
 
-## define utilities
+## define utilities and hyperparameters
+BATCH_SIZE = 10
+EPOCHS = 100
+SEED = 2
 remove_cups = RemoveCupsRewriter()
 ansatz = IQPAnsatz({n: 1, s: 1, h: 1}, n_layers=1, n_single_qubit_params=3)
 
@@ -44,7 +47,7 @@ def read_data(filename):
     with open(filename) as file:
         for line in file:
             t = int(line[0])
-            labels.append([t, 1-t])
+            labels.append([t, 1-t]) # returns an array with the correct label in first place
             sentences.append(line[1:].strip())
     return labels, sentences
 
@@ -53,3 +56,12 @@ def diagramizer(words):
     return ""
 
 ## Procedure
+# read in data and labels
+train_labels, train_data = read_data('./datasets/shuffled/trainsetshuff.txt')
+val_labels, val_data = read_data('./datasets/shuffled/valsetshuff.txt')
+test_labels, test_data = read_data('./datasets/shuffled/testsetshuff.txt')
+# test file reading code
+print(train_data[:5])
+print(train_labels[:5])
+
+# Use diagramizer to build diagrams
