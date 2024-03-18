@@ -1,0 +1,80 @@
+0 neko ga naku
+0 kodomo ga asobu
+0 sensei ga oshieru
+0 ame ga furu
+0 tori ga tobu
+0 inu ga hoeru
+0 hana ga saku
+0 kare ga warau
+0 kanojo ga utau
+0 sora ga aoku naru
+0 kare ga hon o yomu
+0 kanojo ga tegami o kaku
+0 chichi ga shinbun o yomu
+0 haha ga ryouri o suru
+0 sensei ga shukudai o kudasaru
+0 kodomo ga omocha o kowasu
+0 neko ga esa o taberu
+0 inu ga booru o motte kuru
+0 gakusei ga tesuto o uketsugu
+0 shounen ga ki o noboru
+1 neko ga naki masu
+1 kodomo ga asobi masu
+1 sensei ga oshie masu
+1 ame ga furi masu
+1 tori ga tobi masu
+1 inu ga hoe masu
+1 hana ga saki masu
+1 kare ga warai masu
+1 kanojo ga utai masu
+1 sora ga aoku nari masu
+1 kare ga hon o yomi masu
+1 kanojo ga tegami o kaki masu
+1 chichi ga shinbun o yomi masu
+1 haha ga ryouri o shi masu
+1 sensei ga shukudai o kudashi masu
+1 kodomo ga omocha o kowashi masu
+1 neko ga esa o tabe masu
+1 inu ga booru o motte ki masu
+1 gakusei ga tesuto o uketori masu
+1 shounen ga ki o nobori masu
+1 kare wa gakusei desu
+1 kono ringo wa amai desu
+1 kanojo wa sensei desu
+1 ano inu wa ookii desu
+1 kono hon wa omoshiroi desu
+1 asoko wa gakkou desu
+1 kare no ie wa chiisai desu
+1 sono neko wa kawaii desu
+1 kono kamera wa atarashii desu
+1 ano hana wa utsukushii desu
+0 kare wa gakusei da
+0 kono ringo wa amai
+0 kanojo wa sensei da
+0 ano inu wa ookii
+0 kono hon wa omoshiroi
+0 asoko wa gakkou da
+0 kare no ie wa chiisai
+0 sono neko wa kawaii
+0 kono kamera wa atarashii
+0 ano hana wa utsukushii
+0 Tarou ga eki ni iku
+0 Mari ga tomodachi to eiga wo miru
+0 Kenji ga koohii wo nomu
+0 Yumi ga hana wo kau
+0 Hiroshi ga uchi de benkyou suru
+0 Saki ga mise de pan wo kau
+0 Naoko ga neko ni esa wo ageru
+0 Tetsuya ga yama ni noboru
+0 Emi ga kouen de hon wo yomu
+0 Yuuji ga basu de gakkou ni iku
+1 Tarou san ga eki ni iki masu
+1 Mari san ga eigakan de eiga wo mi masu
+1 Kenji san ga koohii wo nomi masu
+1 Yumi san ga hana wo kai masu
+1 Hiroshi san ga uchi de benkyou shi masu
+1 Saki san ga mise de pan wo kai masu
+1 Naoko san ga neko ni esa wo age masu
+1 Tetsuya san ga yama ni nobori masu
+1 Emi san ga kouen de hon wo yomi masu
+1 Yuuji san ga basu de gakkou ni iki masu
