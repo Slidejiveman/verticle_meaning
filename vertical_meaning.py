@@ -39,7 +39,14 @@ cas_name = n
 particle_logical = n.r @ s.l.l
 
 ## Open datasets and collect sentences
-
+def read_data(filename):
+    labels, sentences = [], []
+    with open(filename) as file:
+        for line in file:
+            t = int(line[0])
+            labels.append([t, 1-t])
+            sentences.append(line[1:].strip())
+    return labels, sentences
 
 ## Diagramizer Algorithm
 def diagramizer(words):
