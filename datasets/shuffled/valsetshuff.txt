@@ -1,40 +1,40 @@
-1  Akira san ga umi de oyogi masu .
-0  yuki ga furu .
-0  tsuki ga deru .
-1  sensei ga tegami wo yomi masu .
-1  Takashi san ga sora wo nagame masu .
-1  Jun san ga shigoto ni okure masu .
-1  kaze ga fuki masu .
-0  kanojo ga pasokon wo tsukau .
-0  kare wa isha da .
-1  yuki ga furi masu .
-0  kono kouen wa hiroi .
-0  sono neko wa nemui .
-0  kaze ga fuku .
-0  Megumi ga tokei wo miru .
-0  Takashi ga sora wo nagameru .
-0  haha ga keeki wo tsukuru .
-1  kono kouen wa hiroi desu .
-1  kumo ga nagare masu .
-0  ano kuruma wa hayai .
-0  kare ga gitaa wo hiku .
-0  kono shiru wa atatakai .
-1  kodomo ga e wo kaki masu .
-1  ano kuruma wa hayai desu .
-1  tsuki ga de masu .
-0  hoshi ga kagayaku .
-1  kare ga gitaa wo hiki masu .
-0  kumo ga nagareru .
-1  haha ga keeki wo tsukuri masu .
-1  Megumi san ga tokei wo mi masu .
-1  hoshi ga kagayaki masu .
-1  Keiko san ga piano wo hiki masu .
-0  Akira ga umi de oyogu .
-1  sono neko wa nemui desu .
-0  kodomo ga e wo kaku .
-0  Jun ga shigoto ni okureru .
-1  kare wa isha desu .
-0  sensei ga tegami wo yomu .
-1  kono shiru wa atatakai desu .
-0  Keiko ga piano wo hiku .
-1  kanojo ga pasokon wo tsukai masu .
+1  kare ga gitaa wo hiki masu
+1  kumo ga nagare masu
+0  hoshi ga kagayaku
+1  sono neko wa nemui desu
+1  Jun san ga shigoto ni okure masu
+1  kono kouen wa hiroi desu
+1  sensei ga tegami wo yomi masu
+1  kodomo ga e wo kaki masu
+0  Keiko ga piano wo hiku
+0  ano kuruma wa hayai
+1  Keiko san ga piano wo hiki masu
+0  sono neko wa nemui
+0  yuki ga furu
+0  sensei ga tegami wo yomu
+0  kaze ga fuku
+1  kanojo ga pasokon wo tsukai masu
+0  kanojo ga pasokon wo tsukau
+1  Akira san ga umi de oyogi masu
+0  Jun ga shigoto ni okureru
+0  kare wa isha da
+1  ano kuruma wa hayai desu
+0  Akira ga umi de oyogu
+1  tsuki ga de masu
+0  kumo ga nagareru
+0  kono shiru wa atatakai
+0  kare ga gitaa wo hiku
+1  Megumi san ga tokei wo mi masu
+1  haha ga keeki wo tsukuri masu
+0  haha ga keeki wo tsukuru
+0  Takashi ga sora wo nagameru
+1  yuki ga furi masu
+0  kodomo ga e wo kaku
+1  kaze ga fuki masu
+1  kare wa isha desu
+0  kono kouen wa hiroi
+0  Megumi ga tokei wo miru
+0  tsuki ga deru
+1  Takashi san ga sora wo nagame masu
+1  kono shiru wa atatakai desu
+1  hoshi ga kagayaki masu

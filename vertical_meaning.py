@@ -52,16 +52,47 @@ def read_data(filename):
     return labels, sentences
 
 ## Diagramizer Algorithm
-def diagramizer(words):
-    return ""
+# Receives a sentence with tokens separated by spaces.
+def diagramizer(sentence):    
+    # Put the input sentence into an ordered list of words
+    words = sentence.split()
+    print(words)
+    
+    # Count the number of input words
+    word_count = len(words)
+    print(f"word count: {word_count}")
+    
+    # Determine if a 'desu' or 'masu' is present
+    honorific_words = ["desu", "masu", "san"]
+    if any(honorific in words for honorific in honorific_words):
+        print("Honorifics found.")
+    
+    # Count the number of particles in the sentence
+    particles = ["ha", "ga", "ni", "de", "wo"]
+    particle_count = sum(words.count(particle) for particle in particles)
+    print(f"number of particles: {particle_count}")
+    
+    # Determine particle positions to aid in detecting the presence of adjectives or adverbs
+    particle_indices = {particle: [] for particle in particles}
+    for index, particle in enumerate(words):
+        if particle in particle_indices:
+            particle_indices[particle].append(index)
+    print("Indices of particles: ")
+    for particle, particle_index_list in particle_indices.items():
+        print(f"{particle}: {particle_index_list}")
+    
+    # Assign types to substrings to turn them into a list of Word types
+    
+    
+    # Assign morphism connections
+    
+    # build and return diagram
 
 ## Procedure
 # read in data and labels
 train_labels, train_data = read_data('./datasets/shuffled/trainsetshuff.txt')
 val_labels, val_data = read_data('./datasets/shuffled/valsetshuff.txt')
 test_labels, test_data = read_data('./datasets/shuffled/testsetshuff.txt')
-# test file reading code
-print(train_data[:5])
-print(train_labels[:5])
 
 # Use diagramizer to build diagrams
+diagramizer("kore ga testo desu .")
