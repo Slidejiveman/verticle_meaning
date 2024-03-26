@@ -18,16 +18,16 @@
 1  sensei ga tegami wo yomi masu
 1  haha ga keeki wo tsukuri masu
 1  kodomo ga e wo kaki masu
-0  kare wa isha da
-0  kono kouen wa hiroi
-0  sono neko wa nemui
-0  kono shiru wa atatakai
-0  ano kuruma wa hayai
-1  kare wa isha desu
-1  kono kouen wa hiroi desu
-1  sono neko wa nemui desu
-1  kono shiru wa atatakai desu
-1  ano kuruma wa hayai desu
+0  kare ha isha da
+0  kono kouen ha hiroi
+0  sono neko ha nemui
+0  kono shiru ha atatakai
+0  ano kuruma ha hayai
+1  kare ha isha desu
+1  kono kouen ha hiroi desu
+1  sono neko ha nemui desu
+1  kono shiru ha atatakai desu
+1  ano kuruma ha hayai desu
 0  Akira ga umi de oyogu
 0  Keiko ga piano wo hiku
 0  Jun ga shigoto ni okureru

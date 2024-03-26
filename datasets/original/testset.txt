@@ -18,16 +18,16 @@
 1  okaasan ga kippu wo kai masu
 1  otousan ga kuruma wo arai masu
 1  jibun ga meishi wo watashi masu
-0  kono kafe wa shizuka da
-0  ano tori wa mezurashii
-0  sono hon wa furui
-0  kono uta wa yuumei da
-0  ano mise wa shinsetsu da
-1  kono kafe wa shizuka desu
-1  ano tori wa mezurashii desu
-1  sono hon wa furui desu
-1  kono uta wa yuumei desu
-1  ano mise wa shinsetsu desu
+0  kono kafe ha shizuka da
+0  ano tori ha mezurashii
+0  sono hon ha furui
+0  kono uta ha yuumei da
+0  ano mise ha shinsetsu da
+1  kono kafe ha shizuka desu
+1  ano tori ha mezurashii desu
+1  sono hon ha furui desu
+1  kono uta ha yuumei desu
+1  ano mise ha shinsetsu desu
 0  Haruka ga yama de kempu suru
 0  Rina ga gitaa wo kau
 0  Ken ga toshokan ni hon wo kaesu

@@ -37,7 +37,7 @@ adj_i_s = verb_casual_single
 adj_i = n @ n.l
 adj_w_na = adj_i
 adj_wo_na = n 
-adv = s.l @ s.l.l    
+adv = s.l.l    
 pro = n
 cas_name = n
 # particles (ha, ga, ni, de, wo in single sentence context)
@@ -46,7 +46,7 @@ particle_logical = n.r @ s.l.l
 ## Define special words
 particles = ["ha", "ga", "ni", "de", "wo"]
 titles = ["san"]
-honorific_words = ["desu", "masu", titles[0]]
+honorific_words = ["desu", "masu"] + titles
 casual_copula = ["da"]
 special_words = casual_copula + honorific_words + particles
 
@@ -62,10 +62,19 @@ def read_data(filename):
 
 ## Diagramizer Algorithm
 # Receives a sentence with tokens separated by spaces.
+# Passed tests: "kanojo ga kaeru", "kanojo ga kaeri masu", "kanojo ga kami wo ori masu", 
+# "kanojo ga tsukue de kami wo ori masu", "kanojo ga tsukue de kami wo oru", "kanojo ga utsukushii"
+# "hon ga utsukushii desu", "Suzuki san ga utsukushii", "Suzuki san ga Tanaka san wo hanasu"
+# "kanojo ga kami wo utsukushiku oru", "kanojo ga booru wo motte ki masu", "kanojo ga booru wo motte kuru",
+# "hon ga kantan da", "Suzuki san ga kirei desu", and ""
 def diagramizer(sentence):    
     # Put the input sentence into an ordered list of words
-    words = sentence.split()
-    print(words)
+    if sentence is not None and sentence != "":
+        words = sentence.split()
+        print(words)
+    else:
+        print("Diagramizer's input cannot be empty.")
+        return
     
     # Count the number of input words
     word_count = len(words)
@@ -93,11 +102,13 @@ def diagramizer(sentence):
     # Second: Check ending word for "desu", "masu", "da", or a word that ends in "i".
     sentence_ender = None
     meaning_carrier = None
+    adv_index = None
+    te_index = None
     if special_word_indices["desu"]:
         print("desu found.")
         # it is possible that the following check will catch a name like "Genji".
         # for now, this assumption is safe enough to work with. Filtering for common names could improve this.
-        if words[-2][-1] == "i":
+        if words[-2][-1] == "i" and words[-2][-2:] != "ei":
             sentence_ender = desu_i_adj
             meaning_carrier = particle_links @ s @ h.l
         else:
@@ -105,9 +116,14 @@ def diagramizer(sentence):
     elif special_word_indices["masu"]:
         print("masu found.")
         sentence_ender = masu
-        if  words[-3][-2:] == "ku" or words[-3][-2:] == "te": # this could be improved "tte" is always the te-form.
-            print("adverb or te-form found")
+        if  words[-3][-2:] == "ku": 
+            print("adverb found")
             meaning_carrier = s.l @ particle_links @ s @ h.l
+            adv_index = word_count - 3
+        elif words[-3][-2:] == "te": # this could be improved "tte" is always the te-form.
+            print("te-form found")   # this could be improved to catch adverbs before a te-form
+            meaning_carrier = s.l @ s @ h.l
+            te_index = word_count - 3
         else:
             meaning_carrier = particle_links @ s @ h.l
     elif special_word_indices["da"]:
@@ -118,9 +134,14 @@ def diagramizer(sentence):
         sentence_ender = particle_links @ s
     elif words[-1][-1] == "u":
         print("the sentence ends in a casual verb.")
-        if words[-2][-2:] == "ku" or words[-2][-2:] == "te":
-            print("adverb or te-form found")
+        if words[-2][-2:] == "ku":
+            print("adverb found")
             sentence_ender = s.l @ particle_links @ s
+            adv_index = word_count - 2
+        elif words[-2][-2:] == "te":
+            print("te-form found")
+            sentence_ender = s.l @ s
+            te_index = word_count - 2
         else:
             sentence_ender = particle_links @ s
     else: # this will also catch dependent clauses and single word utterances. This could be improved.
@@ -128,19 +149,43 @@ def diagramizer(sentence):
     
     # Third: Build out list of types that uses the same indices as the words
     types = [None] * word_count
-    if sentence_ender: # TODO: doesn't account for adverbs yet
-        types[word_count-1] = sentence_ender
-        print(f"type n-1: {types[word_count-1]}")
+    if sentence_ender: # TODO: doesn't account for desu
+        types[word_count - 1] = sentence_ender
+        print(f"type word_count-1: {types[word_count - 1]}")
     if meaning_carrier:
-        types[word_count-2] = meaning_carrier
-        print(f"type n-2: {types[word_count-2]}")
-    if particle_count: # TODO: doesn't account for titles or adjectives yet
+        types[word_count - 2] = meaning_carrier
+        print(f"type word_count-2: {types[word_count - 2]}")
+    if special_word_indices["desu"] and sentence_ender == h @ n.r @ particle_links @ s:
+        if types[word_count - 2] is None:
+            types[word_count - 2] = pred_polite_n
+        print(f"type word_count-2: {types[word_count - 2]}")
+    if special_word_indices["da"]:
+        if types[word_count - 2] is None:
+            types[word_count - 2] = n
+        print(f"type word_count-2: {types[word_count - 2]}")
+    if te_index:
+        types[te_index] = particle_links @ s.l.l
+        print(f"te: {types[te_index]}")
+    if adv_index:
+        types[adv_index] = adv
+        print(f"adv: {types[adv_index]}")
+    if special_word_indices["san"]:
+        print(special_word_indices["san"])
+        for title_index in special_word_indices["san"]:
+            types[title_index] = title
+            print(f"title type: {types[title_index]}")
+            if title_index >= 1 and types[title_index - 1] is None:
+                types[title_index - 1] = name
+    if particle_count: 
         flattened_particle_indices = [index for particle in particles if particle in special_word_indices for index in special_word_indices[particle]]
-        print(flattened_particle_indices)
+        print(f"particle indices: {flattened_particle_indices}")
         for particle_index in flattened_particle_indices:
             types[particle_index] = particle_logical
             print(f"particle type: {types[particle_index]}")
-            types[particle_index-1] = n
+            if particle_index >= 2 and types[particle_index - 2] is None:
+                types[particle_index-2] = adj_i
+            if particle_index >= 1 and types[particle_index - 1] is None:
+                types[particle_index-1] = n
     print(f"types: {types}")
     sub_types = " @ ".join(str(type) for type in types).split(" @ ")
     print(f"sub_types: {sub_types}")
@@ -152,15 +197,19 @@ def diagramizer(sentence):
         typed_sentence.append(Word(word, type))
     print(f"typed_sentence: {typed_sentence}")
     
-    # TODO: Assign morphism connections programmatically based on the sub-type indices
+    # Fifth: assign morphism connections programmatically based on the sub-type indices
     sub_types_scratch = sub_types.copy()
     s_type = sub_types_scratch.index("s")
     morphisms = []
     sub_types_scratch[s_type] = True
     jump_distance = 1
-    while len(set(sub_types_scratch)) > 1:
-        for i in range (len(sub_types_scratch) - 1) : # look left to right for adjacents then start increasing the jump distance
-            if sub_types_scratch[i] == "n.l" and sub_types_scratch[i + jump_distance] == "n":
+    while len(set(sub_types_scratch)) > 1 and jump_distance < len(sub_types_scratch) - 1:
+        for i in range (len(sub_types_scratch) - 1) :
+            if sub_types_scratch[i] == "h.l" and sub_types_scratch[i + jump_distance] == "h":
+                morphisms.append((Cup, i, i + jump_distance))
+                sub_types_scratch[i] = True
+                sub_types_scratch[i + jump_distance] = True
+            elif sub_types_scratch[i] == "n.l" and sub_types_scratch[i + jump_distance] == "n":
                 morphisms.append((Cup, i, i + jump_distance))
                 sub_types_scratch[i] = True
                 sub_types_scratch[i + jump_distance] = True
@@ -168,18 +217,14 @@ def diagramizer(sentence):
                 morphisms.append((Cup, i, i + jump_distance))
                 sub_types_scratch[i] = True
                 sub_types_scratch[i + jump_distance] = True
-            elif sub_types_scratch[i] == "h.l" and sub_types_scratch[i + jump_distance] == "h":
-                morphisms.append((Cup, i, i + jump_distance))
-                sub_types_scratch[i] = True
-                sub_types_scratch[i + jump_distance] = True
             elif sub_types_scratch[i] == "s.l.l" and sub_types_scratch[i + jump_distance] == "s.l":
                 morphisms.append((Cup, i, i + jump_distance))
                 sub_types_scratch[i] = True
                 sub_types_scratch[i + jump_distance] = True
-        jump_distance = jump_distance + 1
         print(f"Morphism loop: jump_distance {jump_distance} and morphisms {len(morphisms)}")
+        jump_distance = jump_distance + 1
     
-    # build and return diagram
+    # Sixth: build and return diagram
     diagram = Diagram.create_pregroup_diagram(typed_sentence, morphisms)
     diagram.draw(figsize=(9, 10))
     return diagram
@@ -193,11 +238,18 @@ def quantizer(diagram):
     return circuit 
 
 ## Procedure
+# Test driver
+# diagram = diagramizer("Suzuki san ga kirei desu")
+# if diagram is not None:
+#     circuit = quantizer(diagram)
+    
 # read in data and labels
 train_labels, train_data = read_data('./datasets/shuffled/trainsetshuff.txt')
 val_labels, val_data = read_data('./datasets/shuffled/valsetshuff.txt')
 test_labels, test_data = read_data('./datasets/shuffled/testsetshuff.txt')
 
 # Use diagramizer to build diagrams
-diagram = diagramizer("kanojo ga kaeru")
-circuit = quantizer(diagram)
+train_diagrams = []
+for sentence in train_data:
+    train_diagrams.append(diagramizer(sentence))
+print(train_diagrams[:5])

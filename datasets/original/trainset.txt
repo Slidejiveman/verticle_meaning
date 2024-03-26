@@ -38,26 +38,26 @@
 1  inu ga booru o motte ki masu
 1  gakusei ga tesuto o uketori masu
 1  shounen ga ki o nobori masu
-1  kare wa gakusei desu
-1  kono ringo wa amai desu
-1  kanojo wa sensei desu
-1  ano inu wa ookii desu
-1  kono hon wa omoshiroi desu
-1  asoko wa gakkou desu
-1  kare no ie wa chiisai desu
-1  sono neko wa kawaii desu
-1  kono kamera wa atarashii desu
-1  ano hana wa utsukushii desu
-0  kare wa gakusei da
-0  kono ringo wa amai
-0  kanojo wa sensei da
-0  ano inu wa ookii
-0  kono hon wa omoshiroi
-0  asoko wa gakkou da
-0  kare no ie wa chiisai
-0  sono neko wa kawaii
-0  kono kamera wa atarashii
-0  ano hana wa utsukushii
+1  kare ha gakusei desu
+1  kono ringo ha amai desu
+1  kanojo ha sensei desu
+1  ano inu ha ookii desu
+1  kono hon ha omoshiroi desu
+1  asoko ha gakkou desu
+1  kare no ie ha chiisai desu
+1  sono neko ha kawaii desu
+1  kono kamera ha atarashii desu
+1  ano hana ha utsukushii desu
+0  kare ha gakusei da
+0  kono ringo ha amai
+0  kanojo ha sensei da
+0  ano inu ha ookii
+0  kono hon ha omoshiroi
+0  asoko ha gakkou da
+0  kare no ie ha chiisai
+0  sono neko ha kawaii
+0  kono kamera ha atarashii
+0  ano hana ha utsukushii
 0  Tarou ga eki ni iku
 0  Mari ga tomodachi to eiga wo miru
 0  Kenji ga koohii wo nomu
