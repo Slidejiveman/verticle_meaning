@@ -128,7 +128,7 @@ def diagramizer(sentence):
             meaning_carrier = s.l @ s @ h.l
             te_index = word_count - 3
         elif words[-2] == "shi" and words[-3] != "wo": # handle special verb suru, which makes verbal nouns
-            print("verbal noun found")
+            print("polite verbal noun found")
             meaning_carrier = n.r @ particle_links @ s @ h.l
             noun_verb_index = word_count - 3
         else:
@@ -149,6 +149,10 @@ def diagramizer(sentence):
             print("te-form found")
             sentence_ender = s.l @ s
             te_index = word_count - 2
+        elif words[-1] == "suru" and words[-2] != "wo": # handle special verb suru, which makes verbal nouns
+            print("casual verbal noun found")
+            sentence_ender = n.r @ particle_links @ s
+            noun_verb_index = word_count - 2
         else:
             sentence_ender = particle_links @ s
     else: # this will also catch dependent clauses and single word utterances. This could be improved.

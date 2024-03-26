@@ -1,40 +1,40 @@
-1  ane ga shashin wo tori masu
-1  Satoshi san ga kouen de inu wo aruki masu
-0  kono kafe ha shizuka da
-0  kumo ga kieru
-0  Satoshi ga kouen de inu wo aruku
-1  jibun ga meishi wo watashi masu
-1  Rina san ga gitaa wo kai masu
-0  ano mise ha shinsetsu da
-1  Haruna san ga yama de kempu shi masu
-0  sono hon ha furui
-1  otousan ga kuruma wo arai masu
-1  okaasan ga kippu wo kai masu
-1  ano tori ha mezurashii desu
-1  tsuki ga kumo ni kakure masu
-1  kumo ga kie masu
-0  Yoko ga umi ni sazanami wo kiku
-0  jibun ga meishi wo watasu
-0  tsuki ga kumo ni kakureru
-1  Ken san ga toshokan ni hon wo kaeshi masu
-1  sono hon ha furui desu
-0  taiyou ga noboru
-0  ane ga shashin wo toru
-1  ame ga yami masu
-0  Ken ga toshokan ni hon wo kaesu
-0  otouto ga radio wo kiku
 0  ano tori ha mezurashii
-1  ano mise ha shinsetsu desu
+1  ane ga shashin wo tori masu
+0  otouto ga radio wo kiku
+1  Rina san ga gitaa wo kai masu
+1  Ken san ga toshokan ni hon wo kaeshi masu
+0  tsuki ga kumo ni kakureru
 0  ame ga yamu
-0  Haruka ga yama de kempu suru
-1  hoshi ga matataki masu
-1  otouto ga radio wo kiki masu
-0  kono uta ha yuumei da
-0  Rina ga gitaa wo kau
-0  otousan ga kuruma wo arau
-1  kono uta ha yuumei desu
-1  taiyou ga nobori masu
-1  Yoko san ga umi ni sazanami wo kiki masu
-0  hoshi ga matataku
-0  okaasan ga kippu wo kau
+1  ano mise ha shinsetsu desu
 1  kono kafe ha shizuka desu
+1  sono hon ha furui desu
+0  okaasan ga kippu wo kau
+0  Yoko ga umi ni sazanami wo kiku
+1  otouto ga radio wo kiki masu
+0  ane ga shashin wo toru
+1  kumo ga kie masu
+1  Yoko san ga umi ni sazanami wo kiki masu
+0  Rina ga gitaa wo kau
+0  kumo ga kieru
+1  taiyou ga nobori masu
+0  hoshi ga matataku
+1  Satoshi san ga kouen de inu wo aruki masu
+0  Satoshi ga kouen de inu wo aruku
+0  ano mise ha shinsetsu da
+1  tsuki ga kumo ni kakure masu
+1  kono uta ha yuumei desu
+1  ano tori ha mezurashii desu
+1  otousan ga kuruma wo arai masu
+1  ame ga yami masu
+1  jibun ga meishi wo watashi masu
+0  otousan ga kuruma wo arau
+1  okaasan ga kippu wo kai masu
+0  taiyou ga noboru
+0  jibun ga meishi wo watasu
+1  Haruna san ga yama de kempu shi masu
+0  Haruka ga yama de kempu suru
+0  kono uta ha yuumei da
+0  kono kafe ha shizuka da
+0  sono hon ha furui
+1  hoshi ga matataki masu
+0  Ken ga toshokan ni hon wo kaesu
