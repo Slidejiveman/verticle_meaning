@@ -42,13 +42,15 @@ pro = n
 cas_name = n
 # particles (ha, ga, ni, de, wo in single sentence context)
 particle_logical = n.r @ s.l.l
+possessive_no = n.r @ n.l
 
 ## Define special words
 particles = ["ha", "ga", "ni", "de", "wo"]
 titles = ["san"]
 honorific_words = ["desu", "masu"] + titles
 casual_copula = ["da"]
-special_words = casual_copula + honorific_words + particles
+possessives = ["no"]
+special_words = casual_copula + honorific_words + particles + possessives
 
 ## Open datasets and collect sentences
 def read_data(filename):
@@ -170,12 +172,20 @@ def diagramizer(sentence):
         types[adv_index] = adv
         print(f"adv: {types[adv_index]}")
     if special_word_indices["san"]:
-        print(special_word_indices["san"])
+        print(f"title: {special_word_indices['san']}")
         for title_index in special_word_indices["san"]:
             types[title_index] = title
             print(f"title type: {types[title_index]}")
             if title_index >= 1 and types[title_index - 1] is None:
                 types[title_index - 1] = name
+    if special_word_indices["no"]:
+        print(f"possessive no: {special_word_indices['no']}")
+        for no_index in special_word_indices["no"]:
+            types[no_index] = possessive_no
+            if no_index >= 1 and types[no_index - 1] is None:
+                types[no_index - 1] = n
+            if no_index < len(types) and types[no_index + 1] is None:
+                types[no_index + 1] = n
     if particle_count: 
         flattened_particle_indices = [index for particle in particles if particle in special_word_indices for index in special_word_indices[particle]]
         print(f"particle indices: {flattened_particle_indices}")
@@ -226,7 +236,7 @@ def diagramizer(sentence):
     
     # Sixth: build and return diagram
     diagram = Diagram.create_pregroup_diagram(typed_sentence, morphisms)
-    diagram.draw(figsize=(9, 10))
+    #diagram.draw(figsize=(9, 10))
     return diagram
 
 ## Quantizer Method
@@ -234,7 +244,7 @@ def diagramizer(sentence):
 def quantizer(diagram):
     diagram = diagram.normal_form()
     circuit = ansatz(remove_cups(diagram.normal_form()))
-    circuit.draw(figsize=(9,10))
+    #circuit.draw(figsize=(9,10))
     return circuit 
 
 ## Procedure
