@@ -13,7 +13,7 @@ SEED = 2
 remove_cups = RemoveCupsRewriter()
 ansatz = IQPAnsatz({n: 1, s: 1, h: 1}, n_layers=1, n_single_qubit_params=3)
 
-## define grammar model
+## define grammar model. NOTE: There are extra types defined here to capture possible avenues of research
 # polite
 pred_polite_n = n @ h.l
 verb_connective = s @ h.l # particle_links @ verb connective
@@ -43,6 +43,8 @@ cas_name = n
 # particles (ha, ga, ni, de, wo in single sentence context)
 particle_logical = n.r @ s.l.l
 possessive_no = n.r @ n.l
+with_to = particle_logical
+and_to_ya_toka = possessive_no
 
 ## Define special words
 particles = ["ha", "ga", "ni", "de", "wo"]
@@ -223,31 +225,34 @@ def diagramizer(sentence):
     
     # Fifth: assign morphism connections programmatically based on the sub-type indices
     # TODO: Wrap this in a try/except block. Return "None" if this process fails.
-    sub_types_scratch = sub_types.copy()
-    s_type = sub_types_scratch.index("s")
-    morphisms = []
-    sub_types_scratch[s_type] = True
-    jump_distance = 1
-    while len(set(sub_types_scratch)) > 1 and jump_distance < len(sub_types_scratch) - 2:
-        for i in range (len(sub_types_scratch) - 1) :
-            if sub_types_scratch[i] == "h.l" and sub_types_scratch[i + jump_distance] == "h":
-                morphisms.append((Cup, i, i + jump_distance))
-                sub_types_scratch[i] = True
-                sub_types_scratch[i + jump_distance] = True
-            elif sub_types_scratch[i] == "n.l" and sub_types_scratch[i + jump_distance] == "n":
-                morphisms.append((Cup, i, i + jump_distance))
-                sub_types_scratch[i] = True
-                sub_types_scratch[i + jump_distance] = True
-            elif sub_types_scratch[i] == "n" and sub_types_scratch[i + jump_distance] == "n.r":
-                morphisms.append((Cup, i, i + jump_distance))
-                sub_types_scratch[i] = True
-                sub_types_scratch[i + jump_distance] = True
-            elif sub_types_scratch[i] == "s.l.l" and sub_types_scratch[i + jump_distance] == "s.l":
-                morphisms.append((Cup, i, i + jump_distance))
-                sub_types_scratch[i] = True
-                sub_types_scratch[i + jump_distance] = True
-        print(f"Morphism loop: jump_distance {jump_distance} and morphisms {len(morphisms)}")
-        jump_distance = jump_distance + 1
+    try:
+        sub_types_scratch = sub_types.copy()
+        s_type = sub_types_scratch.index("s")
+        morphisms = []
+        sub_types_scratch[s_type] = True
+        jump_distance = 1
+        while len(set(sub_types_scratch)) > 1 and jump_distance < len(sub_types_scratch) - 1:
+            for i in range (len(sub_types_scratch) - 1) :
+                if sub_types_scratch[i] == "h.l" and sub_types_scratch[i + jump_distance] == "h":
+                    morphisms.append((Cup, i, i + jump_distance))
+                    sub_types_scratch[i] = True
+                    sub_types_scratch[i + jump_distance] = True
+                elif sub_types_scratch[i] == "n.l" and sub_types_scratch[i + jump_distance] == "n":
+                    morphisms.append((Cup, i, i + jump_distance))
+                    sub_types_scratch[i] = True
+                    sub_types_scratch[i + jump_distance] = True
+                elif sub_types_scratch[i] == "n" and sub_types_scratch[i + jump_distance] == "n.r":
+                    morphisms.append((Cup, i, i + jump_distance))
+                    sub_types_scratch[i] = True
+                    sub_types_scratch[i + jump_distance] = True
+                elif sub_types_scratch[i] == "s.l.l" and sub_types_scratch[i + jump_distance] == "s.l":
+                    morphisms.append((Cup, i, i + jump_distance))
+                    sub_types_scratch[i] = True
+                    sub_types_scratch[i + jump_distance] = True
+            print(f"Morphism loop: jump_distance {jump_distance} and morphisms {len(morphisms)}")
+            jump_distance = jump_distance + 1
+    except: # diagram could not be constructed
+        return None
     
     # Sixth: build and return diagram
     diagram = Diagram.create_pregroup_diagram(typed_sentence, morphisms)
@@ -274,13 +279,13 @@ val_labels, val_data = read_data('./datasets/shuffled/valsetshuff.txt')
 test_labels, test_data = read_data('./datasets/shuffled/testsetshuff.txt')
 
 # Use diagramizer to build diagrams
-train_diagrams = []
-for sentence in train_data:
-    train_diagrams.append(diagramizer(sentence))
-val_diagrams = []
-for sentence in val_data:
-    val_diagrams.append(diagramizer(sentence))
-test_diagrams = []
-for sentence in test_data:
-    test_diagrams.append(diagramizer(sentence))
+train_diagrams = [diagramizer(sentence) for sentence in train_data if sentence is not None]
+val_diagrams = [diagramizer(sentence) for sentence in val_data if sentence is not None]
+test_diagrams = [diagramizer(sentence) for sentence in test_data if sentence is not None]
 print("Diagrams constructed from corpus data.")
+
+# construct circuits
+train_circuits = [quantizer(diagram) for diagram in train_diagrams if diagram is not None]
+val_circuits = [quantizer(diagram) for diagram in val_diagrams if diagram is not None]
+test_circuits = [quantizer(diagram) for diagram in test_diagrams if diagram is not None]
+print("Circuits constructed from diagrams.")
