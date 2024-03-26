@@ -59,7 +59,7 @@
 0  kono kamera ha atarashii
 0  ano hana ha utsukushii
 0  Tarou ga eki ni iku
-0  Mari ga tomodachi to eiga wo miru
+0  Mari ga eiga wo miru
 0  Kenji ga koohii wo nomu
 0  Yumi ga hana wo kau
 0  Hiroshi ga uchi de benkyou suru

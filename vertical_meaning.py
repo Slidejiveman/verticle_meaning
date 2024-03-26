@@ -106,6 +106,7 @@ def diagramizer(sentence):
     meaning_carrier = None
     adv_index = None
     te_index = None
+    noun_verb_index = None
     if special_word_indices["desu"]:
         print("desu found.")
         # it is possible that the following check will catch a name like "Genji".
@@ -126,6 +127,10 @@ def diagramizer(sentence):
             print("te-form found")   # this could be improved to catch adverbs before a te-form
             meaning_carrier = s.l @ s @ h.l
             te_index = word_count - 3
+        elif words[-2] == "shi" and words[-3] != "wo": # handle special verb suru, which makes verbal nouns
+            print("verbal noun found")
+            meaning_carrier = n.r @ particle_links @ s @ h.l
+            noun_verb_index = word_count - 3
         else:
             meaning_carrier = particle_links @ s @ h.l
     elif special_word_indices["da"]:
@@ -171,6 +176,9 @@ def diagramizer(sentence):
     if adv_index:
         types[adv_index] = adv
         print(f"adv: {types[adv_index]}")
+    if noun_verb_index:
+        types[noun_verb_index] = n
+        print(f"verbal_noun: {types[noun_verb_index]}")
     if special_word_indices["san"]:
         print(f"title: {special_word_indices['san']}")
         for title_index in special_word_indices["san"]:
