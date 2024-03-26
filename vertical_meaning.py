@@ -200,10 +200,12 @@ def diagramizer(sentence):
                 types[no_index + 1] = n
     if particle_count: 
         flattened_particle_indices = [index for particle in particles if particle in special_word_indices for index in special_word_indices[particle]]
+        flattened_particle_indices.sort() # particles must be assigned from left to right to avoid overwrite issues
         print(f"particle indices: {flattened_particle_indices}")
         for particle_index in flattened_particle_indices:
-            types[particle_index] = particle_logical
-            print(f"particle type: {types[particle_index]}")
+            if types[particle_index] == None: # some particles like "de" are also polite verb stems.
+                types[particle_index] = particle_logical
+                print(f"particle type: {types[particle_index]}")
             if particle_index >= 2 and types[particle_index - 2] is None:
                 types[particle_index-2] = adj_i
             if particle_index >= 1 and types[particle_index - 1] is None:
@@ -220,12 +222,13 @@ def diagramizer(sentence):
     print(f"typed_sentence: {typed_sentence}")
     
     # Fifth: assign morphism connections programmatically based on the sub-type indices
+    # TODO: Wrap this in a try/except block. Return "None" if this process fails.
     sub_types_scratch = sub_types.copy()
     s_type = sub_types_scratch.index("s")
     morphisms = []
     sub_types_scratch[s_type] = True
     jump_distance = 1
-    while len(set(sub_types_scratch)) > 1 and jump_distance < len(sub_types_scratch) - 1:
+    while len(set(sub_types_scratch)) > 1 and jump_distance < len(sub_types_scratch) - 2:
         for i in range (len(sub_types_scratch) - 1) :
             if sub_types_scratch[i] == "h.l" and sub_types_scratch[i + jump_distance] == "h":
                 morphisms.append((Cup, i, i + jump_distance))
@@ -274,4 +277,10 @@ test_labels, test_data = read_data('./datasets/shuffled/testsetshuff.txt')
 train_diagrams = []
 for sentence in train_data:
     train_diagrams.append(diagramizer(sentence))
-print(train_diagrams[:5])
+val_diagrams = []
+for sentence in val_data:
+    val_diagrams.append(diagramizer(sentence))
+test_diagrams = []
+for sentence in test_data:
+    test_diagrams.append(diagramizer(sentence))
+print("Diagrams constructed from corpus data.")
