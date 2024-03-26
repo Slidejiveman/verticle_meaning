@@ -1,6 +1,8 @@
 from lambeq.backend.grammar import Cup, Diagram, Id, Swap, Ty, Word
-from lambeq.backend.drawing import draw, draw_equation
-from lambeq import IQPAnsatz, RemoveCupsRewriter
+from lambeq import BinaryCrossEntropyLoss, Dataset, IQPAnsatz, QuantumTrainer, RemoveCupsRewriter, SPSAOptimizer, TketModel
+from pytket.extensions.qiskit import AerBackend
+import numpy as np
+import matplotlib.pyplot as plt
 
 ## define the grammatical types
 # note the "h" type for honorifics/polite form
@@ -224,7 +226,6 @@ def diagramizer(sentence):
     print(f"typed_sentence: {typed_sentence}")
     
     # Fifth: assign morphism connections programmatically based on the sub-type indices
-    # TODO: Wrap this in a try/except block. Return "None" if this process fails.
     try:
         sub_types_scratch = sub_types.copy()
         s_type = sub_types_scratch.index("s")
@@ -278,14 +279,47 @@ train_labels, train_data = read_data('./datasets/shuffled/trainsetshuff.txt')
 val_labels, val_data = read_data('./datasets/shuffled/valsetshuff.txt')
 test_labels, test_data = read_data('./datasets/shuffled/testsetshuff.txt')
 
-# Use diagramizer to build diagrams
+# use diagramizer to build diagrams
 train_diagrams = [diagramizer(sentence) for sentence in train_data if sentence is not None]
 val_diagrams = [diagramizer(sentence) for sentence in val_data if sentence is not None]
 test_diagrams = [diagramizer(sentence) for sentence in test_data if sentence is not None]
 print("Diagrams constructed from corpus data.")
+
+# create labeled maps of diagrams (this is not using the read in data directly)
+train_labels = [label for (diagram, label) in zip(train_diagrams, train_labels) if diagram is not None]
+val_labels = [label for (diagram, label) in zip(val_diagrams, val_labels) if diagram is not None]
+test_labels = [label for (diagram, label) in zip(test_diagrams, test_labels) if diagram is not None]
+print("Label lists constructed.")
 
 # construct circuits
 train_circuits = [quantizer(diagram) for diagram in train_diagrams if diagram is not None]
 val_circuits = [quantizer(diagram) for diagram in val_diagrams if diagram is not None]
 test_circuits = [quantizer(diagram) for diagram in test_diagrams if diagram is not None]
 print("Circuits constructed from diagrams.")
+
+# instantiate training model
+train_val_circuits = train_circuits + val_circuits
+backend = AerBackend()
+backend_config = {
+    'backend': backend,
+    'compilation': backend.default_compilation_pass(2),
+    'shots': 8192
+}
+model = TketModel.from_diagrams(train_val_circuits, backend_config=backend_config)
+bce = BinaryCrossEntropyLoss()
+acc = lambda y_hat, y: np.sum(np.round(y_hat) == y) / len(y) / 2
+eval_metrics = {"acc": acc}
+
+# initialize trainer
+trainer = QuantumTrainer(model, loss_function=bce, epochs=EPOCHS, optimizer=SPSAOptimizer,
+    optim_hyperparams={'a': 0.05, 'c': 0.06, 'A': 0.001 * EPOCHS}, evaluate_functions=eval_metrics,
+    evaluate_on_train=True, verbose='text', log_dir='./logs', seed=0)
+
+# create datasets
+train_dataset = Dataset(train_circuits, train_labels, batch_size=BATCH_SIZE)
+val_dataset = Dataset(val_circuits, val_labels, shuffle=False)
+
+# train model
+trainer.fit(train_dataset, val_dataset, early_stopping_interval=10)
+
+# visualize results
