@@ -1,19 +1,29 @@
-from lambeq.backend.grammar import Cup, Diagram, Id, Swap, Ty, Word
-from lambeq import BinaryCrossEntropyLoss, Dataset, IQPAnsatz, QuantumTrainer, RemoveCupsRewriter, SPSAOptimizer, TketModel
+from lambeq.backend.grammar import Cup, Diagram, Ty, Word
+from lambeq import AtomicType, BinaryCrossEntropyLoss, Dataset, IQPAnsatz, NumpyModel, QuantumTrainer, RemoveCupsRewriter, SPSAOptimizer, TketModel, UnifyCodomainRewriter
 from pytket.extensions.qiskit import AerBackend
+import jax.numpy as jnp
 import numpy as np
 import matplotlib.pyplot as plt
 
 ## define the grammatical types
 # note the "h" type for honorifics/polite form
-n, s, h = Ty('n'), Ty('s'), Ty ('h') 
+n, s, h = AtomicType.NOUN, AtomicType.SENTENCE, Ty ('h') 
 
 ## define utilities and hyperparameters
-BATCH_SIZE = 10
+BATCH_SIZE = 2
 EPOCHS = 100
 SEED = 2
+optimizer = SPSAOptimizer
+alpha = {'a': 0.05} 
+c = {'c': 0.06}
+A = {'A': 0.001 * EPOCHS}
+optim_hyperparams=alpha | c | A
+bce = BinaryCrossEntropyLoss() #because this is a classification task
+log_dir='./logs'
 remove_cups = RemoveCupsRewriter()
-ansatz = IQPAnsatz({n: 1, s: 1, h: 1}, n_layers=1, n_single_qubit_params=3)
+u_cdom_rewriter = UnifyCodomainRewriter(s)
+ansatz = IQPAnsatz({n: 1, s: 1, h: 1}, n_layers=2, n_single_qubit_params=3)
+
 
 ## define grammar model. NOTE: There are extra types defined here to capture possible avenues of research
 # polite
@@ -66,6 +76,15 @@ def read_data(filename):
             sentences.append(line[1:].strip())
     return labels, sentences
 
+## Define accuracy metric
+def acc(y_hat, y):
+    if isinstance(y_hat, jnp.ndarray):
+        y_hat = np.asarray(y_hat)
+    if isinstance(y, jnp.ndarray):
+        y = np.asarray(y)
+    accuracy = np.sum(np.round(y_hat) == y) / len(y) / 2
+    return accuracy
+
 ## Diagramizer Algorithm
 # Receives a sentence with tokens separated by spaces.
 # Passed tests: "kanojo ga kaeru", "kanojo ga kaeri masu", "kanojo ga kami wo ori masu", 
@@ -75,7 +94,7 @@ def read_data(filename):
 # "hon ga kantan da", "Suzuki san ga kirei desu", and ""
 def diagramizer(sentence):    
     # Put the input sentence into an ordered list of words
-    if sentence is not None and sentence != "":
+    if sentence is not None and sentence != "": 
         words = sentence.split()
         print(words)
     else:
@@ -164,7 +183,7 @@ def diagramizer(sentence):
     
     # Third: Build out list of types that uses the same indices as the words
     types = [None] * word_count
-    if sentence_ender: # TODO: doesn't account for desu
+    if sentence_ender:
         types[word_count - 1] = sentence_ender
         print(f"type word_count-1: {types[word_count - 1]}")
     if meaning_carrier:
@@ -285,6 +304,12 @@ val_diagrams = [diagramizer(sentence) for sentence in val_data if sentence is no
 test_diagrams = [diagramizer(sentence) for sentence in test_data if sentence is not None]
 print("Diagrams constructed from corpus data.")
 
+# Rewrite diagrams so that they are the same shape and can be used with pytorch tensors.
+train_diagrams = [u_cdom_rewriter(diagram) for diagram in train_diagrams if diagram is not None]
+val_diagrams = [u_cdom_rewriter(diagram) for diagram in val_diagrams if diagram is not None]
+test_diagrams = [u_cdom_rewriter(diagram) for diagram in test_diagrams if diagram is not None]
+print("Diagrams padded.")
+
 # create labeled maps of diagrams (this is not using the read in data directly)
 train_labels = [label for (diagram, label) in zip(train_diagrams, train_labels) if diagram is not None]
 val_labels = [label for (diagram, label) in zip(val_diagrams, val_labels) if diagram is not None]
@@ -298,22 +323,21 @@ test_circuits = [quantizer(diagram) for diagram in test_diagrams if diagram is n
 print("Circuits constructed from diagrams.")
 
 # instantiate training model
-train_val_circuits = train_circuits + val_circuits
+all_circuits = train_circuits + val_circuits + test_circuits
 backend = AerBackend()
 backend_config = {
     'backend': backend,
     'compilation': backend.default_compilation_pass(2),
     'shots': 8192
 }
-model = TketModel.from_diagrams(train_val_circuits, backend_config=backend_config)
-bce = BinaryCrossEntropyLoss()
-acc = lambda y_hat, y: np.sum(np.round(y_hat) == y) / len(y) / 2
+#model = TketModel.from_diagrams(all_circuits, backend_config=backend_config)
+model = NumpyModel.from_diagrams(all_circuits, use_jit=True)
 eval_metrics = {"acc": acc}
 
 # initialize trainer
-trainer = QuantumTrainer(model, loss_function=bce, epochs=EPOCHS, optimizer=SPSAOptimizer,
-    optim_hyperparams={'a': 0.05, 'c': 0.06, 'A': 0.001 * EPOCHS}, evaluate_functions=eval_metrics,
-    evaluate_on_train=True, verbose='text', log_dir='./logs', seed=0)
+trainer = QuantumTrainer(model, loss_function=bce, epochs=EPOCHS, optimizer=optimizer,
+    optim_hyperparams=optim_hyperparams, evaluate_functions=eval_metrics,
+    evaluate_on_train=True, verbose='text', log_dir=log_dir, seed=SEED)
 
 # create datasets
 train_dataset = Dataset(train_circuits, train_labels, batch_size=BATCH_SIZE)
@@ -323,3 +347,29 @@ val_dataset = Dataset(val_circuits, val_labels, shuffle=False)
 trainer.fit(train_dataset, val_dataset, early_stopping_interval=10)
 
 # visualize results
+fig, ((ax_tl, ax_tr), (ax_bl, ax_br)) = plt.subplots(2, 2, sharex=True, sharey='row', figsize=(10, 6))
+ax_tl.set_title('Training set')
+ax_tr.set_title('Validation set')
+ax_bl.set_xlabel('Iterations')
+ax_br.set_xlabel('Iterations')
+ax_bl.set_ylabel('Accuracy')
+ax_tl.set_ylabel('Loss')
+colours = iter(plt.rcParams['axes.prop_cycle'].by_key()['color'])
+range_ = np.arange(1, len(trainer.train_epoch_costs)+1)
+ax_tl.plot(range_, trainer.train_epoch_costs, color=next(colours))
+ax_bl.plot(range_, trainer.train_eval_results['acc'], color=next(colours))
+ax_tr.plot(range_, trainer.val_costs, color=next(colours))
+ax_br.plot(range_, trainer.val_eval_results['acc'], color=next(colours))
+# mark best model as circle
+best_epoch = np.argmin(trainer.val_costs)
+ax_tl.plot(best_epoch + 1, trainer.train_epoch_costs[best_epoch], 'o', color='black', fillstyle='none')
+ax_tr.plot(best_epoch + 1, trainer.val_costs[best_epoch], 'o', color='black', fillstyle='none')
+ax_bl.plot(best_epoch + 1, trainer.train_eval_results['acc'][best_epoch], 'o', color='black', fillstyle='none')
+ax_br.plot(best_epoch + 1, trainer.val_eval_results['acc'][best_epoch], 'o', color='black', fillstyle='none')
+ax_tr.text(best_epoch + 1.4, trainer.val_costs[best_epoch], 'early stopping', va='center')
+plt.show()
+
+# print test accuracy
+model.load(trainer.log_dir + '/best_model.lt')
+test_acc = acc(model(test_circuits), test_labels)
+print('Validation accuracy:', test_acc.item())

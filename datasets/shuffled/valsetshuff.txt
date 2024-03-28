@@ -1,40 +1,80 @@
-1  kare ha isha desu
-1  hoshi ga kagayaki masu
-1  tsuki ga de masu
-0  kodomo ga e wo kaku
-0  sono neko ha nemui
-1  haha ga keeki wo tsukuri masu
-1  sono neko ha nemui desu
-1  Takashi san ga sora wo nagame masu
-1  ano kuruma ha hayai desu
-0  kare ga gitaa wo hiku
-1  kanojo ga pasokon wo tsukai masu
-0  yuki ga furu
-0  Jun ga shigoto ni okureru
 1  Megumi san ga tokei wo mi masu
-1  kumo ga nagare masu
-0  kanojo ga pasokon wo tsukau
-1  sensei ga tegami wo yomi masu
-1  kare ga gitaa wo hiki masu
-1  Jun san ga shigoto ni okure masu
-0  kumo ga nagareru
-1  kono kouen ha hiroi desu
-0  kono kouen ha hiroi
-0  kono shiru ha atatakai
-1  kaze ga fuki masu
-0  ano kuruma ha hayai
-0  Akira ga umi de oyogu
-0  hoshi ga kagayaku
-1  Akira san ga umi de oyogi masu
-1  kono shiru ha atatakai desu
-0  sensei ga tegami wo yomu
-1  Keiko san ga piano wo hiki masu
+0  yuki ga furu
 1  kodomo ga e wo kaki masu
-0  Megumi ga tokei wo miru
-0  kaze ga fuku
-1  yuki ga furi masu
-0  kare ha isha da
-0  haha ga keeki wo tsukuru
-0  Keiko ga piano wo hiku
+0  kodomo ga e wo kaku
 0  tsuki ga deru
+1  sensei ga tegami wo yomi masu
+0  kaze ga fuku
+0  sono neko ha nemui
+0  kanojo ga pasokon wo tsukau
+0  kumo ga nagareru
+1  taiyou ga nobori masu
+0  otouto ga radio wo kiku
+1  kono uta ha yuumei desu
+0  hoshi ga kagayaku
+0  Satoshi ga kouen de inu wo aruku
+0  ano mise ha shinsetsu da
+1  kanojo ga pasokon wo tsukai masu
+1  Jun san ga shigoto ni okure masu
+1  hoshi ga matataki masu
+0  ame ga yamu
 0  Takashi ga sora wo nagameru
+0  Yoko ga umi ni sazanami wo kiku
+1  hoshi ga kagayaki masu
+1  ano kuruma ha hayai desu
+0  Haruka ga yama de kempu suru
+0  Rina ga gitaa wo kau
+0  haha ga keeki wo tsukuru
+1  Haruna san ga yama de kempu shi masu
+0  jibun ga meishi wo watasu
+0  ano tori ha mezurashii
+1  ano tori ha mezurashii desu
+1  kare ha isha desu
+1  Rina san ga gitaa wo kai masu
+1  haha ga keeki wo tsukuri masu
+1  okaasan ga kippu wo kai masu
+1  sono hon ha furui desu
+0  Jun ga shigoto ni okureru
+1  yuki ga furi masu
+0  Keiko ga piano wo hiku
+1  ano mise ha shinsetsu desu
+1  otouto ga radio wo kiki masu
+1  kono kafe ha shizuka desu
+1  sono neko ha nemui desu
+1  kare ga gitaa wo hiki masu
+1  kaze ga fuki masu
+0  sono hon ha furui
+0  ane ga shashin wo toru
+1  ame ga yami masu
+0  tsuki ga kumo ni kakureru
+1  ane ga shashin wo tori masu
+0  Megumi ga tokei wo miru
+1  Satoshi san ga kouen de inu wo aruki masu
+0  Ken ga toshokan ni hon wo kaesu
+0  kono uta ha yuumei da
+1  tsuki ga de masu
+1  Ken san ga toshokan ni hon wo kaeshi masu
+1  kumo ga nagare masu
+0  kare ga gitaa wo hiku
+1  tsuki ga kumo ni kakure masu
+0  kono shiru ha atatakai
+0  kumo ga kieru
+0  hoshi ga matataku
+0  sensei ga tegami wo yomu
+0  ano kuruma ha hayai
+0  kono kouen ha hiroi
+1  kumo ga kie masu
+1  otousan ga kuruma wo arai masu
+0  Akira ga umi de oyogu
+0  okaasan ga kippu wo kau
+1  Akira san ga umi de oyogi masu
+1  kono kouen ha hiroi desu
+1  jibun ga meishi wo watashi masu
+1  Yoko san ga umi ni sazanami wo kiki masu
+0  kono kafe ha shizuka da
+1  Takashi san ga sora wo nagame masu
+0  taiyou ga noboru
+0  kare ha isha da
+1  Keiko san ga piano wo hiki masu
+0  otousan ga kuruma wo arau
+1  kono shiru ha atatakai desu
