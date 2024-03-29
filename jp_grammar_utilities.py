@@ -15,7 +15,7 @@ def is_valid_input(sentence):
     is_valid = False
     # this check could be improved, but it is sufficient for the dataset in question 
     if sentence is not None and sentence != "" and (sentence.endswith(endings) or sentence[-1] == "u" or (
-                                                                sentence[-1] == "u" and sentence[-1] != "ei")):
+                                                                sentence[-1] == "i" and sentence[-1] != "ei")):
         is_valid = True
     return is_valid
 
