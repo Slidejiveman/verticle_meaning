@@ -1,11 +1,14 @@
 from lambeq.backend.grammar import Cup, Diagram, Word
 from lambeq import RemoveCupsRewriter
+import logging
 import numpy as np
 import matplotlib.pyplot as plt
 from jp_grammar_model import * # grammar types
 
 ## utilities
-remove_cups = RemoveCupsRewriter() 
+remove_cups = RemoveCupsRewriter()
+logging.basicConfig(filename='./logs/utilities/diagramizer.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+ 
 
 ## helper functions
 # this function finds indices of particles, sentence enders, and titles.
@@ -24,15 +27,15 @@ def find_special_words(words):
     for index, special_word in enumerate(words):
         if special_word in special_word_indices:
             special_word_indices[special_word].append(index)
-    print("Indices and counts of special words: ")
+    logging.info("Indices and counts of special words: ")
     for special_word, special_word_index_list in special_word_indices.items():
-        print(f"{special_word}: {special_word_index_list}, Count: {len(special_word_index_list)}")
+        logging.info(f"{special_word}: {special_word_index_list}, Count: {len(special_word_index_list)}")
     return special_word_indices
 
 # this function determins the number of particles in the sentence so that the verb type can be constructed later
 def find_particle_count(special_word_indices):
     particle_count = sum(len(special_word_indices[particle]) for particle in particles if particle in special_word_indices)
-    print(f"particle count: {particle_count}")
+    logging.info(f"particle count: {particle_count}")
     return particle_count
 
 # build particle_links type, which will be used as a part of some sentence enders.
@@ -40,7 +43,7 @@ def build_particle_links(particle_count):
     particle_links = Ty()
     for _ in range(0, particle_count):
         particle_links = particle_links @ s.l
-    print(f"particle_links value: {particle_links}")
+    logging.info(f"particle_links value: {particle_links}")
     return particle_links
 
 # type the predicate of the sentence. Relies on helpers
@@ -56,21 +59,21 @@ def type_predicate(special_word_indices, words, particle_links):
         sentence_ender, meaning_carrier, adv_index, te_index, noun_verb_index = type_masu_predicate(
                                                                                 words, particle_links)
     elif special_word_indices["da"]:
-        print("da found.")
+        logging.info("da found.")
         sentence_ender = n.r @ particle_links @ s 
     elif words[-1][-1] == "i" and words[-1][-2:] != "ei": 
-        print("casual i-adjective sentence ender found.")
+        logging.info("casual i-adjective sentence ender found.")
         sentence_ender = particle_links @ s
     elif words[-1][-1] == "u":
         sentence_ender, adv_index, te_index, noun_verb_index = type_casual_verb_predicate(
                                                                         words, particle_links)
     else: # this will also catch dependent clauses and single word utterances. This could be improved.
-        print("the text is a dependent clause, word, or phrase, which is unsupported.")
+        logging.warning("Standard predicate types not found in type_predicate.")
     return sentence_ender, meaning_carrier, adv_index, te_index, noun_verb_index
 
 # handle when the predicate contains "desu"
 def type_desu_predicate(words, particle_links):
-    print("desu found.")
+    logging.info("desu found.")
     # it is possible that the following check will catch a name like "Genji".
     # for now, this assumption is safe enough to work with. Filtering for common names could improve this.
     if words[-2][-1] == "i" and words[-2][-2:] != "ei":
@@ -83,7 +86,7 @@ def type_desu_predicate(words, particle_links):
 
 # handle when the predicate contains "masu"
 def type_masu_predicate(words, particle_links):
-    print("masu found.")
+    logging.info("masu found.")
     word_count = len(words)
     sentence_ender = masu
     meaning_carrier = None
@@ -91,15 +94,15 @@ def type_masu_predicate(words, particle_links):
     te_index = None
     noun_verb_index = None
     if  words[-3][-2:] == "ku": 
-        print("adverb found")
+        logging.info("adverb found")
         meaning_carrier = s.l @ particle_links @ s @ h.l
         adv_index = word_count - 3
     elif words[-3][-2:] == "te": # this could be improved "tte" is always the te-form.
-        print("te-form found")   # this could be improved to catch adverbs before a te-form
+        logging.info("te-form found")   # this could be improved to catch adverbs before a te-form
         meaning_carrier = s.l @ s @ h.l
         te_index = word_count - 3
     elif words[-2] == "shi" and words[-3] != "wo": # handle special verb suru, which makes verbal nouns
-        print("polite verbal noun found")
+        logging.info("polite verbal noun found")
         meaning_carrier = n.r @ particle_links @ s @ h.l
         noun_verb_index = word_count - 3
     else:
@@ -108,21 +111,21 @@ def type_masu_predicate(words, particle_links):
 
 # handlle when the predicate contains a casual verb
 def type_casual_verb_predicate(words, particle_links):
-    print("the sentence ends in a casual verb.")
+    logging.info("the sentence ends in a casual verb.")
     word_count = len(words)
     adv_index = None
     te_index = None
     noun_verb_index = None
     if words[-2][-2:] == "ku":
-        print("adverb found")
+        logging.info("adverb found")
         sentence_ender = s.l @ particle_links @ s
         adv_index = word_count - 2
     elif words[-2][-2:] == "te":
-        print("te-form found")
+        logging.info("te-form found")
         sentence_ender = s.l @ s
         te_index = word_count - 2
     elif words[-1] == "suru" and words[-2] != "wo": # handle special verb suru, which makes verbal nouns
-        print("casual verbal noun found")
+        logging.info("casual verbal noun found")
         sentence_ender = n.r @ particle_links @ s
         noun_verb_index = word_count - 2
     else:
@@ -136,36 +139,36 @@ def type_indexed_words(words, special_word_indices, sentence_ender, meaning_carr
     types = [None] * word_count
     if sentence_ender:
         types[word_count - 1] = sentence_ender
-        print(f"type word_count-1: {types[word_count - 1]}")
+        logging.info(f"type word_count-1: {types[word_count - 1]}")
     if meaning_carrier:
         types[word_count - 2] = meaning_carrier
-        print(f"type word_count-2: {types[word_count - 2]}")
+        logging.info(f"type word_count-2: {types[word_count - 2]}")
     if special_word_indices["desu"] and sentence_ender == h @ n.r @ particle_links @ s:
         if types[word_count - 2] is None:
             types[word_count - 2] = pred_polite_n
-        print(f"type word_count-2: {types[word_count - 2]}")
+        logging.info(f"type word_count-2: {types[word_count - 2]}")
     if special_word_indices["da"]:
         if types[word_count - 2] is None:
             types[word_count - 2] = n
-        print(f"type word_count-2: {types[word_count - 2]}")
+        logging.info(f"type word_count-2: {types[word_count - 2]}")
     if te_index:
         types[te_index] = particle_links @ s.l.l
-        print(f"te: {types[te_index]}")
+        logging.info(f"te: {types[te_index]}")
     if adv_index:
         types[adv_index] = adv
-        print(f"adv: {types[adv_index]}")
+        logging.info(f"adv: {types[adv_index]}")
     if noun_verb_index:
         types[noun_verb_index] = n
-        print(f"verbal_noun: {types[noun_verb_index]}")
+        logging.info(f"verbal_noun: {types[noun_verb_index]}")
     if special_word_indices["san"]:
-        print(f"title: {special_word_indices['san']}")
+        logging.info(f"title: {special_word_indices['san']}")
         for title_index in special_word_indices["san"]:
             types[title_index] = title
-            print(f"title type: {types[title_index]}")
+            logging.info(f"title type: {types[title_index]}")
             if title_index >= 1 and types[title_index - 1] is None:
                 types[title_index - 1] = name
     if special_word_indices["no"]:
-        print(f"possessive no: {special_word_indices['no']}")
+        logging.info(f"possessive no: {special_word_indices['no']}")
         for no_index in special_word_indices["no"]:
             types[no_index] = possessive_no
             if no_index >= 1 and types[no_index - 1] is None:
@@ -175,11 +178,11 @@ def type_indexed_words(words, special_word_indices, sentence_ender, meaning_carr
     if particle_count: 
         flattened_particle_indices = [index for particle in particles if particle in special_word_indices for index in special_word_indices[particle]]
         flattened_particle_indices.sort() # particles must be assigned from left to right to avoid overwrite issues
-        print(f"particle indices: {flattened_particle_indices}")
+        logging.info(f"particle indices: {flattened_particle_indices}")
         for particle_index in flattened_particle_indices:
             if types[particle_index] == None: # some particles like "de" are also polite verb stems.
                 types[particle_index] = particle_logical
-                print(f"particle type: {types[particle_index]}")
+                logging.info(f"particle type: {types[particle_index]}")
             if particle_index >= 2 and types[particle_index - 2] is None:
                 types[particle_index-2] = adj_i
             if particle_index >= 1 and types[particle_index - 1] is None:
@@ -192,7 +195,7 @@ def type_sentence(words, types):
     typed_sentence = []
     for word, type in word_type_dict: 
         typed_sentence.append(Word(word, type))
-    print(f"typed_sentence: {typed_sentence}")
+    logging.info(f"typed_sentence: {typed_sentence}")
     return typed_sentence
 
 # create scratch sub-type list for the morphism algorithm.
@@ -239,7 +242,7 @@ def build_morphisms(sub_types_scratch):
                 link_sub_types_with_cup(morphisms, sub_types_scratch, i, jump_distance)
             elif sub_types_scratch[i] == "s.l.l" and sub_types_scratch[i + jump_distance] == "s.l":
                 link_sub_types_with_cup(morphisms, sub_types_scratch, i, jump_distance)
-        print(f"Morphism loop: jump_distance {jump_distance} and morphisms {len(morphisms)}")
+        logging.info(f"Morphism loop: jump_distance {jump_distance} and morphisms {len(morphisms)}")
         jump_distance = jump_distance + 1
     return morphisms
 
@@ -256,7 +259,7 @@ def diagramizer(sentence):
         if is_valid_input(sentence): 
             # Put the input sentence into an ordered list of words
             words = sentence.split() 
-            print(words)
+            logging.info(words)
         else:
             raise Exception("Input must be a complete sentence separated by spaces with no punctuation marks.")
         
@@ -276,12 +279,12 @@ def diagramizer(sentence):
         # and special word indices. Finally, type the sentence
         types = type_indexed_words(words, special_word_indices, sentence_ender, meaning_carrier, 
                         particle_links, particle_count, te_index, adv_index, noun_verb_index)
-        print(f"types: {types}")
+        logging.info(f"types: {types}")
         typed_sentence = type_sentence(words, types)
         
         # Fourth: create sub-type indices so that morphisms can be drawn
         sub_types = " @ ".join(str(type) for type in types).split(" @ ")
-        print(f"sub_types: {sub_types}")
+        logging.info(f"sub_types: {sub_types}")
         
         # Fifth: assign morphism connections programmatically based on the sub-type indices
         sub_types_scratch = create_type_scratch(sub_types)
@@ -290,8 +293,10 @@ def diagramizer(sentence):
         diagram = Diagram.create_pregroup_diagram(typed_sentence, morphisms)
     except ValueError as e:
         print(f"Caught an exception: {e}")
+        logging.ERROR(f"Caught an exception: {e}")
     except Exception as e: 
         print(f"Caught an exception: {e}")
+        logging.ERROR(f"Caught an exception: {e}")
     finally:
         return diagram
 

@@ -3,8 +3,11 @@ from jp_grammar_utilities import diagramizer, quantizer, visualizer
 from lambeq import BinaryCrossEntropyLoss, Dataset, IQPAnsatz, NumpyModel, QuantumTrainer, SPSAOptimizer, TketModel, UnifyCodomainRewriter
 from pytket.extensions.qiskit import AerBackend
 import jax.numpy as jnp
+import logging
 import numpy as np
 
+## Setup logging
+logging.basicConfig(filename='./logs/quantum/app/app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 ## Open datasets and collect sentences
 def read_data(filename):
@@ -37,7 +40,7 @@ eval_metrics = {"acc": acc}
 optim_hyperparams = alpha | c | A
 is_fast_test = True
 bce = BinaryCrossEntropyLoss() 
-log_dir='./logs'
+log_dir='./logs/quantum'
 u_cdom_rewriter = UnifyCodomainRewriter(s)
 ansatz = IQPAnsatz({n: 1, s: 1, h: 1}, n_layers=2, n_single_qubit_params=3)
 
@@ -51,25 +54,25 @@ test_labels, test_data = read_data('./datasets/shuffled/testsetshuff.txt')
 train_diagrams = [diagramizer(sentence) for sentence in train_data if sentence is not None]
 val_diagrams = [diagramizer(sentence) for sentence in val_data if sentence is not None]
 test_diagrams = [diagramizer(sentence) for sentence in test_data if sentence is not None]
-print("Diagrams constructed from corpus data.")
+logging.info("Diagrams constructed from corpus data.")
 
 # Rewrite diagrams so that they are the same shape and can be used with pytorch tensors.
 train_diagrams = [u_cdom_rewriter(diagram) for diagram in train_diagrams if diagram is not None]
 val_diagrams = [u_cdom_rewriter(diagram) for diagram in val_diagrams if diagram is not None]
 test_diagrams = [u_cdom_rewriter(diagram) for diagram in test_diagrams if diagram is not None]
-print("Diagrams padded.")
+logging.info("Diagrams padded.")
 
 # create labeled maps of diagrams (this is not using the read in data directly)
 train_labels = [label for (diagram, label) in zip(train_diagrams, train_labels) if diagram is not None]
 val_labels = [label for (diagram, label) in zip(val_diagrams, val_labels) if diagram is not None]
 test_labels = [label for (diagram, label) in zip(test_diagrams, test_labels) if diagram is not None]
-print("Label lists constructed.")
+logging.info("Label lists constructed.")
 
 # construct circuits
 train_circuits = [quantizer(diagram, ansatz) for diagram in train_diagrams if diagram is not None]
 val_circuits = [quantizer(diagram, ansatz) for diagram in val_diagrams if diagram is not None]
 test_circuits = [quantizer(diagram, ansatz) for diagram in test_diagrams if diagram is not None]
-print("Circuits constructed from diagrams.")
+logging.info("Circuits constructed from diagrams.")
 
 # instantiate training model
 all_circuits = train_circuits + val_circuits + test_circuits
@@ -102,4 +105,5 @@ visualizer(trainer)
 # print test accuracy
 model.load(trainer.log_dir + '/best_model.lt')
 test_acc = acc(model(test_circuits), test_labels)
-print('Validation accuracy:', test_acc.item())
+print('Test set accuracy:', test_acc.item())
+logging.info('Test set accuracy:', test_acc.item())
