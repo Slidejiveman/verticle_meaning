@@ -1,8 +1,8 @@
-from lambeq.backend.grammar import Cup, Diagram, Id, Swap, Ty, Word
+from lambeq.backend.grammar import Cup, Diagram, Id, Ty, Word
 from lambeq.backend.drawing import draw, draw_equation
 from lambeq import IQPAnsatz, RemoveCupsRewriter
 
-### This file contains the proof of concept for the larger project.
+### This file contains the proofs of concept for the larger project.
 ### It defines the types, grammmatical model, and runs tests to show that they work.
 ### This information is then used to generalize the concept for vertical_meaning.py
 
